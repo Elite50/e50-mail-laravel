@@ -4,8 +4,8 @@ namespace Elite50\E50MailLaravel;
 use Illuminate\Support\SerializableClosure;
 use Queue;
 
-class E50Mail {
-
+class E50Mail
+{
     /**
      * Queues an email to be sent later
      *
@@ -14,13 +14,19 @@ class E50Mail {
      * @param array $data
      * @param Closure $callback
      */
-    public function queue($domain, $view, $data, $callback)
-    {
+    public function queue(
+        $domain,
+        $view,
+        $data,
+        $callback,
+        $driver = null
+    ) {
         Queue::push('E50MailWorker', [
             $domain,
             $view,
             $data,
-            serialize(new SerializableClosure($callback))
+            serialize(new SerializableClosure($callback)),
+            $driver
         ]);
     }
 }

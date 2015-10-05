@@ -22,8 +22,20 @@ class E50MailWorker
     public function fire($sqsJob, $params)
     {
         // Get the needed parameters
-        list($domain, $view, $data, $callback) = $params;
-        $callback = unserialize($callback)->getClosure();
+        $domain = $params[0];
+        $view = $params[1];
+        $data = $params[2];
+        $callback = unserialize($params[3])->getClosure();
+        $driver = isset($params[4]) ? $params[4] : null;
+
+        \Log::info($driver);
+
+        // If using a specific driver, set it now
+        if (!is_null($driver)) {
+            Config::set('mail.driver', $driver);
+        }
+
+        \Log::info(Config::get('mail.driver'));
 
         // If not using the mailgun driver, send normally ignoring the domain
         if (Config::get('mail.driver') !== 'mailgun') {

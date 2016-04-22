@@ -1,6 +1,6 @@
 # Elite50 E50Mail Laravel Facade
 
-An extension of [Laravel's](http://laravel.com/) Mail facade with support for multiple Mailgun domains.
+An extension of [Laravel's](http://laravel.com/) Mail facade with support for multiple Mailgun domains and dynamic drivers.
 
 ## Using the facade
 
@@ -35,6 +35,7 @@ E50Mail::queue(
     ['name' => 'John Doe'],
     function ($message) {
         $message->to('john@example.com', 'John Doe');
-    }
+    },
+    'mailgun'
 );
 ```

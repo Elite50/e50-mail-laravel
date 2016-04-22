@@ -2,12 +2,14 @@
 namespace Elite50\E50MailLaravel;
 
 use Config;
+use Exception;
 use Illuminate\Mail\Transport\MailgunTransport;
 use Illuminate\Support\SerializableClosure;
 use Log;
 use Mail;
 use Swift_Mailer;
 use Swift_RfcComplianceException;
+use Swift_TransportException;
 
 class E50MailWorker
 {
@@ -65,13 +67,29 @@ class E50MailWorker
      * @param array|string $view
      * @param array $data
      * @param Closure $callback
+     * @param int $attempt
      */
-    private function send($view, $data, $callback)
+    private function send($view, $data, $callback, $attempt = 0)
     {
         try {
             Mail::send($view, $data, $callback);
-        } catch (Swift_RfcComplianceException $e) {
-            Log::error($e->getMessage());
+        } catch (Exception $e) {
+            if ($e instanceof Swift_RfcComplianceException) {
+                Log::error($e->getMessage());
+            } elseif ($e instanceof Swift_TransportException) {
+                if (strpos($e->getMessage(), 'unroutable domain') !== false) {
+                    Log::error($e->getMessage());
+                } else {
+                    if ($attempt < 4) {
+                        sleep($attempt * 10 + 1);
+                        $this->send($view, $data, $callback, $attempt + 1);
+                    } else {
+                        throw $e;
+                    }
+                }
+            } else {
+                throw $e;
+            }
         }
     }
 }

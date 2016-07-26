@@ -78,7 +78,7 @@ class E50MailWorker
                 Log::error($e->getMessage());
             } elseif ($e instanceof Swift_TransportException) {
                 if (strpos($e->getMessage(), 'unroutable domain') !== false) {
-                    Log::error($e->getMessage());
+                    Log::warning($e->getMessage());
                 } else {
                     if ($attempt < 4) {
                         sleep($attempt * 10 + 1);

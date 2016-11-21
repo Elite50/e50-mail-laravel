@@ -81,6 +81,12 @@ class E50MailWorker
                     isset($messageData['fromName']) ? $messageData['fromName'] : null
                 );
                 $message->subject($messageData['subject']);
+                // Add headers if included
+                if (isset($messageData['headers'])) {
+                    foreach ($messageData['headers'] as $headerName => $headerValue) {
+                        $message->getHeaders()->addTextHeader($headerName, $headerValue);
+                    }
+                }
             });
         } catch (Exception $e) {
             if ($e instanceof Swift_RfcComplianceException) {

@@ -38,7 +38,10 @@ E50Mail::queue(
         'toName' => 'John Doe',
         'fromEmail' => 'robot@example.com',
         'fromName' => 'Mail Robot',
-        'subject' => 'Action Required!'
+        'subject' => 'Action Required!',
+        'headers' => [
+            'X-Mail-Header' => 'abcd1234'
+        ]
     ],
     'mailgun'
 );

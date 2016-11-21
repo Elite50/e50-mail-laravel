@@ -4,7 +4,6 @@ namespace Elite50\E50MailLaravel;
 use Config;
 use Exception;
 use Illuminate\Mail\Transport\MailgunTransport;
-use Illuminate\Support\SerializableClosure;
 use Log;
 use Mail;
 use Swift_Mailer;
@@ -27,7 +26,7 @@ class E50MailWorker
         $domain = $params[0];
         $view = $params[1];
         $data = $params[2];
-        $callback = unserialize($params[3])->getClosure();
+        $messageData = $params[3];
         $driver = isset($params[4]) ? $params[4] : null;
 
         // If using a specific driver, set it now
@@ -37,7 +36,7 @@ class E50MailWorker
 
         // If not using the mailgun driver, send normally ignoring the domain
         if (Config::get('mail.driver') !== 'mailgun') {
-            $this->send($view, $data, $callback);
+            $this->send($view, $data, $messageData);
 
         // Otherwise, adjust the mailgun domain dynamically
         } else {
@@ -52,7 +51,7 @@ class E50MailWorker
             Mail::setSwiftMailer($mailer);
 
             // Send your message
-            $this->send($view, $data, $callback);
+            $this->send($view, $data, $messageData);
 
             // Restore the default mailer instance
             Mail::setSwiftMailer($backup);
@@ -66,13 +65,23 @@ class E50MailWorker
      *
      * @param array|string $view
      * @param array $data
-     * @param Closure $callback
+     * @param array $messageData
      * @param int $attempt
      */
-    private function send($view, $data, $callback, $attempt = 0)
+    private function send($view, $data, $messageData, $attempt = 0)
     {
         try {
-            Mail::send($view, $data, $callback);
+            Mail::send($view, $data, function ($message) use ($messageData) {
+                $message->to(
+                    $messageData['toEmail'],
+                    isset($messageData['toName']) ? $messageData['toName'] : null
+                );
+                $message->from(
+                    $messageData['fromEmail'],
+                    isset($messageData['fromName']) ? $messageData['fromName'] : null
+                );
+                $message->subject($messageData['subject']);
+            });
         } catch (Exception $e) {
             if ($e instanceof Swift_RfcComplianceException) {
                 Log::error($e->getMessage());
@@ -82,7 +91,7 @@ class E50MailWorker
                 } else {
                     if ($attempt < 4) {
                         sleep($attempt * 10 + 1);
-                        $this->send($view, $data, $callback, $attempt + 1);
+                        $this->send($view, $data, $messageData, $attempt + 1);
                     } else {
                         throw $e;
                     }

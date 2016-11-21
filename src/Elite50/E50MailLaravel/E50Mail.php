@@ -1,7 +1,6 @@
 <?php
 namespace Elite50\E50MailLaravel;
 
-use Illuminate\Support\SerializableClosure;
 use Queue;
 
 class E50Mail
@@ -12,20 +11,21 @@ class E50Mail
      * @param string $domain
      * @param array|string $view
      * @param array $data
-     * @param Closure $callback
+     * @param array $messageData
+     * @param string|null $driver
      */
     public function queue(
         $domain,
         $view,
         $data,
-        $callback,
+        $messageData,
         $driver = null
     ) {
         Queue::push('E50MailWorker', [
             $domain,
             $view,
             $data,
-            serialize(new SerializableClosure($callback)),
+            $messageData,
             $driver
         ]);
     }

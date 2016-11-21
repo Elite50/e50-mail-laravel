@@ -33,9 +33,13 @@ E50Mail::queue(
     'example.com',
     ['html' => 'views.html-email'],
     ['name' => 'John Doe'],
-    function ($message) {
-        $message->to('john@example.com', 'John Doe');
-    },
+    [
+        'toEmail' => 'john@example.com',
+        'toName' => 'John Doe',
+        'fromEmail' => 'robot@example.com',
+        'fromName' => 'Mail Robot',
+        'subject' => 'Action Required!'
+    ],
     'mailgun'
 );
 ```

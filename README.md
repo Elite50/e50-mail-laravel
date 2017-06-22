@@ -15,7 +15,7 @@ composer require elite50/e50-mail-laravel
 ```php
 'providers' => array (
     ...
-		'Elite50\E50MailLaravel\E50MailServiceProvider',
+    'Elite50\E50MailLaravel\E50MailServiceProvider',
 ),
 
 'aliases' => array (
@@ -43,6 +43,7 @@ E50Mail::queue(
             'X-Mail-Header' => 'abcd1234'
         ]
     ],
-    'mailgun'
+    'mailgun',
+    'QueueName'
 );
 ```

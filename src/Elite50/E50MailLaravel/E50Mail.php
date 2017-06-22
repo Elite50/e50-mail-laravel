@@ -13,20 +13,26 @@ class E50Mail
      * @param array $data
      * @param array $messageData
      * @param string|null $driver
+     * @param string|null $queue
      */
     public function queue(
         $domain,
         $view,
         $data,
         $messageData,
-        $driver = null
+        $driver = null,
+        $queue = null
     ) {
-        Queue::push('E50MailWorker', [
-            $domain,
-            $view,
-            $data,
-            $messageData,
-            $driver
-        ]);
+        Queue::push(
+            'E50MailWorker',
+            [
+                $domain,
+                $view,
+                $data,
+                $messageData,
+                $driver
+            ],
+            $queue
+        );
     }
 }

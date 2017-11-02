@@ -28,10 +28,16 @@ class E50MailWorker
         $data = $params[2];
         $messageData = $params[3];
         $driver = isset($params[4]) ? $params[4] : null;
+        $config = isset($params[5]) ? $params[5] : null;
 
-        // If using a specific driver, set it now
+        // If using a specific driver, set it now - DEPRECATED
         if (!is_null($driver)) {
             Config::set('mail.driver', $driver);
+        }
+
+        // Override config as necessary
+        if (null !== $config) {
+            Config::set('mail', array_merge(Config::get('mail'), $config));
         }
 
         // If not using the mailgun driver, send normally ignoring the domain

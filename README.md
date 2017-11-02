@@ -1,6 +1,6 @@
 # Elite50 E50Mail Laravel Facade
 
-An extension of [Laravel's](http://laravel.com/) Mail facade with support for multiple Mailgun domains and dynamic drivers.
+An extension of [Laravel's](http://laravel.com/) Mail facade allowing for dynamic configuration.
 
 ## Using the facade
 
@@ -30,9 +30,16 @@ composer require elite50/e50-mail-laravel
 ##### Example:
 ```php
 E50Mail::queue(
+    // Sender domain (required for Mailgun only)
     'example.com',
+
+    // Views
     ['html' => 'views.html-email'],
+
+    // View data
     ['name' => 'John Doe'],
+
+    // Message data
     [
         'toEmail' => 'john@example.com',
         'toName' => 'John Doe',
@@ -40,10 +47,20 @@ E50Mail::queue(
         'fromName' => 'Mail Robot',
         'subject' => 'Action Required!',
         'headers' => [
-            'X-Mail-Header' => 'abcd1234'
-        ]
+            'X-Mail-Header' => 'abcd1234',
+        ],
     ],
+
+    // Custom driver (DEPRECATED - use custom mail config)
     'mailgun',
-    'QueueName'
+
+    // Custom queue
+    'QueueName',
+
+    // Custom mail config
+    [
+        'driver' => 'smtp',
+        'host' => 'smtp.myhost.com',
+    ]
 );
 ```

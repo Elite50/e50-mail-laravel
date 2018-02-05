@@ -2,7 +2,7 @@
     "name": "elite50/e50-mail-laravel",
     "description": "Laravel email facade with support for multiple Mailgun domains.",
     "keywords": ["laravel","mailgun","facade","mail"],
-    "license": "GPLv3",
+    "license": "GPL-3.0-only",
     "authors": [
         {
             "name": "Will Durney",

@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Mail\Transport\MailgunTransport;
 use Log;
 use Mail;
+use Swift_DependencyContainer;
 use Swift_Mailer;
 use Swift_RfcComplianceException;
 use Swift_TransportException;
@@ -29,6 +30,12 @@ class E50MailWorker
         $messageData = $params[3];
         $driver = isset($params[4]) ? $params[4] : null;
         $config = isset($params[5]) ? $params[5] : null;
+
+        // Use TLSv1.2
+        Swift_DependencyContainer::getInstance()
+            ->register('transport.buffer')
+            ->asNewInstanceOf('\Elite50\E50MailLaravel\E50TransportStreamBuffer')
+            ->withDependencies(array('transport.replacementfactory'));
 
         // If using a specific driver, set it now - DEPRECATED
         if (!is_null($driver)) {

@@ -93,6 +93,12 @@ class E50MailWorker
                     $messageData['fromEmail'],
                     isset($messageData['fromName']) ? $messageData['fromName'] : null
                 );
+                if (isset($messageData['replyToEmail'])) {
+                    $message->replyTo(
+                        $messageData['replyToEmail'],
+                        isset($messageData['replyToName']) ? $messageData['replyToName'] : null
+                    );
+                }
                 $message->subject($messageData['subject']);
                 // Add headers if included
                 if (isset($messageData['headers'])) {
